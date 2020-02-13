@@ -4,7 +4,7 @@ spring:
   application:
     name: item-service
   datasource:
-    url: jdbc:mysql://localhost:3306/leyou
+    url: jdbc:mysql://localhost:3306/leyou?useUnicode=true&characterEncoding=utf8
     username: root
     password: root
     hikari:
@@ -18,3 +18,7 @@ eureka:
   instance:
     lease-renewal-interval-in-seconds: 5 # 5秒钟发送一次心跳
     lease-expiration-duration-in-seconds: 10 # 10秒不发送就过期
+
+logging:
+  level:
+    com.leyou: debug
