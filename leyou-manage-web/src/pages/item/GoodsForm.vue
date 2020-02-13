@@ -18,7 +18,7 @@
               <v-flex xs5>
                 <!--商品分类-->
                 <v-cascader
-                  url="/item/category/list"
+                  url="/item/category/queryCategoryListByParentId.json"
                   required
                   showAllLevels
                   v-model="goods.categories"

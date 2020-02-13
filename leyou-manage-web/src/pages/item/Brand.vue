@@ -100,7 +100,7 @@
     methods: {
       getDataFromServer() { // 从服务的加载数的方法。
         // 发起请求
-        this.$http.get("/item/brand/page", {
+        this.$http.get("/item/brand/queryBrandListByPage.json", {
           params: {
             key: this.search, // 搜索条件
             page: this.pagination.page,// 当前页
@@ -125,17 +125,27 @@
       },
       editBrand(oldBrand){
         // 根据品牌信息查询商品分类
-        this.$http.get("/item/category/bid/" + oldBrand.id)
+        this.$http.get("/item/category/queryCategoryByBrandId.json/" + oldBrand.id)
           .then(({data}) => {
             // 修改标记
             this.isEdit = true;
             // 控制弹窗可见：
             this.show = true;
             // 获取要编辑的brand
-            this.oldBrand = oldBrand
+            this.oldBrand = oldBrand;
             // 回显商品分类
             this.oldBrand.categories = data;
           })
+      },
+      deleteBrand(item){
+        console.log(item);
+        this.$http.delete("/item/brand/deleteBrand.json?brandId=" + item.id)
+          .then(() => {
+            this.getDataFromServer();
+            this.$message.success("删除成功！");
+        }).catch(() => {
+          this.$message.error("删除失败！")
+        });
       },
       closeWindow(){
         // 重新加载数据

@@ -3,7 +3,7 @@
     <v-text-field v-model="brand.name" label="请输入品牌名称" required :rules="nameRules"/>
     <v-text-field v-model="brand.letter" label="请输入品牌首字母" required :rules="letterRules"/>
     <v-cascader
-      url="/item/category/list"
+      url="/item/category/queryCategoryListByParentId.json"
       multiple
       required
       v-model="brand.categories"
@@ -64,22 +64,22 @@
           // 定义一个请求参数对象，通过解构表达式来获取brand中的属性
           const {categories, letter, ...params} = this.brand;
           // 数据库中只要保存分类的id即可，因此我们对categories的值进行处理,只保留id，并转为字符串
-          params.cids = categories.map(c => c.id).join(",");
+          params.categoryIds = categories.map(c => c.id).join(",");
           // 将字母都处理为大写
           params.letter = letter.toUpperCase();
           // 将数据提交到后台
           // this.$http.post('/item/brand', this.$qs.stringify(params))
           this.$http({
             method: this.isEdit ? 'put' : 'post',
-            url: '/item/brand',
+            url: this.isEdit ? '/item/brand/updateBrand.json' : '/item/brand/saveBrand.json',
             data: params
           }).then(() => {
             // 关闭窗口
             this.$emit("close");
-            this.$message.success("保存成功！");
+            this.$message.success(this.isEdit ? "编辑成功!":"保存成功！");
           })
             .catch(() => {
-              this.$message.error("保存失败！");
+              this.$message.error(this.isEdit ? "编辑失败!":"保存失败！");
             });
         }
       },
@@ -88,6 +88,7 @@
         this.$refs.myBrandForm.reset();
         // 需要手动清空商品分类
         this.categories = [];
+        this.brand.image = '';
       }
     },
     watch: {

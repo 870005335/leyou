@@ -10,8 +10,10 @@
         <v-list-tile-title v-show="!beginEdit">
           <span >{{model.name}}</span>
         </v-list-tile-title>
-        <input v-show="beginEdit" @click.stop="" :ref="model.id" v-model="model.name"
-               @blur="afterEdit" @keydown.enter="afterEdit"/>
+        <label>
+          <input v-show="beginEdit" @click.stop="" :ref="model.id" v-model="model.name"
+                 @blur="afterEdit" @keydown.enter="afterEdit"/>
+        </label>
       </v-list-tile-content>
       <v-list-tile-action v-if="isEdit">
         <v-btn icon @mouseover="c1='primary'" @mouseout="c1=''" :color="c1" @click.stop="addChild">
@@ -97,15 +99,15 @@
         // 当前项被选中
         this.isSelected = true;
         // 保存当前选中项
-        this.nodes.selected = this
+        this.nodes.selected = this;
 
         // 客户自己的点击事件回调
         this.handleClick(this.model);
 
         // 判断是否为顶级节点，顶级节点需要记录和替换
-        if(this.model.parentId == 0){
+        if(this.model.parentId === 0){
           // 判断打开节点是否是自己
-          if(this.nodes.opened && this != this.nodes.opened){
+          if(this.nodes.opened && this !== this.nodes.opened){
             // 不是，则关闭原来的节点
             this.nodes.opened.open = false;
           }
@@ -138,8 +140,7 @@
           name: '新的节点',
           parentId: this.model.id,
           isParent: false,
-          sort:this.model.children? this.model.children.length + 1:1
-        }
+          sort:this.model.children? this.model.children.length + 1:1};
         if (!this.model.isParent) {
           Vue.set(this.model, 'children', [child]);
           this.model.isParent = true;

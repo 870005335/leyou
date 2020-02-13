@@ -6,7 +6,7 @@
           <v-card>
             <v-card-title>选择分类，查看规格参数模板：</v-card-title>
             <v-divider/>
-              <v-tree url="/item/category/list"
+              <v-tree url="/item/category/queryCategoryListByParentId.json"
                   :isEdit="false"
                   @handleClick="handleClick"
           />
@@ -17,7 +17,7 @@
           <v-card class="elevation-0" v-show="currentNode.id">
               <v-card-title v-if="!currentNode.path">
                 请先选择一个分类
-              </v-card-title>         
+              </v-card-title>
             <v-breadcrumbs dense v-else>
                 <v-icon slot="divider">chevron_right</v-icon>
                 <v-breadcrumbs-item
