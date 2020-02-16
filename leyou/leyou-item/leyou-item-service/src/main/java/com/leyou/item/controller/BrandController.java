@@ -2,7 +2,6 @@ package com.leyou.item.controller;
 
 import com.leyou.common.dao.PageResultResp;
 import com.leyou.item.dao.Brand;
-import com.leyou.item.dao.Category;
 import com.leyou.item.dto.BrandDto;
 import com.leyou.item.service.BrandService;
 import org.slf4j.Logger;
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * @ClassName BrandController
@@ -42,12 +40,17 @@ public class BrandController {
             @RequestParam(value = "sortBy", required = false)String sortBy,
             @RequestParam(value = "desc", required = false)Boolean desc) {
         PageResultResp<Brand> resultResp = brandService.queryBrandListByPage(key, page, rows, sortBy, desc);
-        if (CollectionUtils.isEmpty(resultResp.getItems())) {
-            //查询结果为空
-            LOGGER.info("查询结果为空");
-            return ResponseEntity.noContent().build();
+        try {
+            if (CollectionUtils.isEmpty(resultResp.getItems())) {
+                //查询结果为空
+                LOGGER.info("品牌分页查询结果为空");
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(resultResp);
+        } catch (Exception e) {
+            LOGGER.error("系统异常,品牌分页查询结果失败", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(resultResp);
     }
 
       @PostMapping("saveBrand.json")
@@ -64,7 +67,7 @@ public class BrandController {
             this.brandService.SaveBrand(brand, categoryIdList);
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
-            LOGGER.error("系统异常,新增品牌失败");
+            LOGGER.error("系统异常,新增品牌失败", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -87,7 +90,7 @@ public class BrandController {
             this.brandService.updateBrand(brand, categoryIdList);
             return ResponseEntity.status(HttpStatus.OK).build();
         } catch (Exception e) {
-            LOGGER.error("系统异常,修改品牌失败");
+            LOGGER.error("系统异常,修改品牌失败", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -98,8 +101,23 @@ public class BrandController {
             this.brandService.deleteBrand(brandId);
             return ResponseEntity.ok().build();
         } catch (Exception e) {
-            LOGGER.error("系统异常,删除品牌失败!");
+            LOGGER.error("系统异常,删除品牌失败!", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     };
+
+    @GetMapping("queryBrandsByCategoryId.json/{categoryId}")
+    public ResponseEntity<List<Brand>> queryBrandsByCategoryId(@PathVariable("categoryId")Long categoryId) {
+        try {
+            List<Brand> brandList = brandService.queryBrandListByCategoryId(categoryId);
+            if (CollectionUtils.isEmpty(brandList)) {
+                LOGGER.info("根据分类Id查询品牌列表为空！");
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+            return ResponseEntity.ok(brandList);
+        } catch (Exception e) {
+            LOGGER.error("系统异常,根据分类Id查询品牌列表失败", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 }

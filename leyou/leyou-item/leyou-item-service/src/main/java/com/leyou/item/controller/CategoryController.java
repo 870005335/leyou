@@ -31,26 +31,37 @@ public class CategoryController {
     
     @GetMapping("queryCategoryListByParentId.json")
     public ResponseEntity<List<Category>> queryCategoryListByParentId(@RequestParam("pid")Long pid) {
-        if (pid == null || pid < 0) {
-            LOGGER.info("请求pid不符合要求");
-            return ResponseEntity.badRequest().build();
+        try {
+            if (pid == null || pid < 0) {
+                LOGGER.info("请求pid不符合要求");
+                return ResponseEntity.badRequest().build();
+            }
+            List<Category> categoryList = this.categoryService.queryCategoryListByParentId(pid);
+            if (CollectionUtils.isEmpty(categoryList)) {
+                //查询结果为空
+                LOGGER.info("查询结果为空");
+                return ResponseEntity.noContent().build();
+            }
+            return ResponseEntity.ok(categoryList);
+        } catch (Exception e) {
+            LOGGER.error("系统异常,根据分类列表失败", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        List<Category> categoryList = this.categoryService.queryCategoryListByParentId(pid);
-        if (CollectionUtils.isEmpty(categoryList)) {
-            //查询结果为空
-            LOGGER.info("查询结果为空");
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(categoryList);
     }
 
     @GetMapping("queryCategoryByBrandId.json/{brandId}")
     public ResponseEntity<List<Category>> queryCategoryByBrandId(@PathVariable("brandId")Long brandId) {
-        List<Category> categoryList = categoryService.queryCategoryListByBrandId(brandId);
-        if (CollectionUtils.isEmpty(categoryList)) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        try {
+            List<Category> categoryList = categoryService.queryCategoryListByBrandId(brandId);
+            if (CollectionUtils.isEmpty(categoryList)) {
+                LOGGER.info("查询结果为空");
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+            return ResponseEntity.ok(categoryList);
+        } catch (Exception e) {
+            LOGGER.error("系统异常,根据品牌Id查询分类列表失败", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
-        return ResponseEntity.ok(categoryList);
     }
 
 }

@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -53,5 +55,14 @@ public class CategoryServiceImpl implements CategoryService {
             return categoryMapper.selectByExample(categoryExample);
         }
         return null;
+    }
+
+    @Override
+    public Map<Long, String> queryCategoryNameMapByIdList(List<Long> categoryIdList) {
+        List<Category> categoryList = this.categoryMapper.selectByIdList(categoryIdList);
+        if (!CollectionUtils.isEmpty(categoryIdList)) {
+          return categoryList.stream().collect(Collectors.toMap(Category::getId, Category::getName));
+        }
+        return new HashMap<>();
     }
 }

@@ -5,6 +5,7 @@ import com.leyou.item.dao.Brand;
 import com.leyou.item.dao.Category;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName BrandService
@@ -60,4 +61,24 @@ public interface BrandService {
      * @Date: 2020/2/11 18:36
     **/
     void updateBrand(Brand brand, List<Long> categoryIdList);
+
+    /**
+     * @MethodName: queryBrandNameMapByIdList
+     * @Description: 根据Id列表查询品牌名称Map
+     * @param brandIdList
+     * @Return: java.util.Map<java.lang.Long,java.lang.String>
+     * @Author: Arthas_liubin@Foxmail.com
+     * @Date: 2020/2/14 23:31
+    **/
+    Map<Long, String> queryBrandNameMapByIdList(List<Long> brandIdList);
+
+    /**
+     * @MethodName: queryBrandListByCategoryId
+     * @Description: 根据分类Id查询品牌列表
+     * @param categoryId
+     * @Return: java.util.List<com.leyou.item.dao.Brand>
+     * @Author: Arthas_liubin@Foxmail.com
+     * @Date: 2020/2/15 11:27
+    **/
+    List<Brand> queryBrandListByCategoryId(Long categoryId);
 }

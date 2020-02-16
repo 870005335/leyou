@@ -18,7 +18,9 @@ import org.springframework.util.CollectionUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -120,5 +122,29 @@ public class BrandServiceImpl implements BrandService {
             categoryBrandList.add(categoryBrand);
         });
         categoryBrandMapper.insertList(categoryBrandList);
+    }
+
+    @Override
+    public Map<Long, String> queryBrandNameMapByIdList(List<Long> brandIdList) {
+        List<Brand> brandList = this.brandMapper.selectByIdList(brandIdList);
+        if (!CollectionUtils.isEmpty(brandList)) {
+            return brandList.stream().collect(Collectors.toMap(Brand::getId, Brand::getName));
+        }
+        return new HashMap<>();
+    }
+
+    @Override
+    public List<Brand> queryBrandListByCategoryId(Long categoryId) {
+        //先查中间表品牌Id
+        Example example = new Example(CategoryBrand.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("categoryId", categoryId);
+        List<CategoryBrand> categoryBrandList = this.categoryBrandMapper.selectByExample(example);
+        if (!CollectionUtils.isEmpty(categoryBrandList)) {
+            List<Long> brandIdList = categoryBrandList.stream().
+                    map(CategoryBrand::getBrandId).collect(Collectors.toList());
+            return brandMapper.selectByIdList(brandIdList);
+        }
+        return null;
     }
 }

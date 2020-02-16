@@ -1,6 +1,7 @@
 package com.leyou.item.mapper;
 
 import com.leyou.item.dao.Brand;
+import tk.mybatis.mapper.additional.idlist.SelectByIdListMapper;
 import tk.mybatis.mapper.common.Mapper;
 
 
@@ -11,5 +12,5 @@ import tk.mybatis.mapper.common.Mapper;
  * @Date 2020/2/8 13:42
  * @Version V1.0
  **/
-public interface BrandMapper extends Mapper<Brand>{
+public interface BrandMapper extends Mapper<Brand>, SelectByIdListMapper<Brand, Long> {
 }

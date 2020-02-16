@@ -3,6 +3,7 @@ package com.leyou.item.service;
 import com.leyou.item.dao.Category;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @ClassName CategoryService
@@ -32,4 +33,14 @@ public interface CategoryService {
      * @Date: 2020/2/10 23:04
      **/
     List<Category> queryCategoryListByBrandId(Long brandId);
+
+    /**
+     * @MethodName: queryCategoryNameMapByIdList
+     * @Description: 根据Id列表得到分类名称Map
+     * @param categoryIdList
+     * @Return: java.util.Map<java.lang.Long,java.lang.String>
+     * @Author: Arthas_liubin@Foxmail.com
+     * @Date: 2020/2/14 23:17
+    **/
+    Map<Long, String> queryCategoryNameMapByIdList(List<Long> categoryIdList);
 }
