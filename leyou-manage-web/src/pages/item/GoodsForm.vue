@@ -218,17 +218,17 @@ export default {
 
       this.$http({
         method: this.isEdit ? "put" : "post",
-        url: "/item/goods",
+        url: this.isEdit ? "/item/goods/updateGoods.json" : "/item/goods/saveGoods.json",
         data: goodsParams
       })
         .then(() => {
           // 成功，关闭窗口
           this.$emit("close");
           // 提示成功
-          this.$message.success("保存成功了");
+          this.$message.success(this.isEdit ? "编辑成功！" :"保存成功！");
         })
         .catch(() => {
-          this.$message.error("保存失败！");
+          this.$message.error(this.isEdit ? "编辑失败！" :"保存失败！");
         });
     }
   },
@@ -278,13 +278,13 @@ export default {
         if (val && val.length > 0) {
           // 根据分类查询品牌
           this.$http
-            .get("/item/brand/cid/" + this.goods.categories[2].id)
+            .get("/item/brand/queryBrandsByCategoryId.json/" + this.goods.categories[2].id)
             .then(({ data }) => {
               this.brandOptions = data;
             });
           // 根据分类查询规格参数
           this.$http
-            .get("/item/spec/params?cid=" + this.goods.categories[2].id)
+            .get("/item/spec/params/queryParamList.json?categoryId=" + this.goods.categories[2].id)
             .then(({ data }) => {
               let specs = [];
               let template = [];

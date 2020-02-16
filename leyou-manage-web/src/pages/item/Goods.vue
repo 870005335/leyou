@@ -45,7 +45,7 @@
           <v-btn icon @click="editGoods(props.item)">
             <i class="el-icon-edit"/>
           </v-btn>
-          <v-btn icon>
+          <v-btn icon @click="deleteGoods(props.item)">
             <i class="el-icon-delete"/>
           </v-btn>
           <v-btn icon v-if="props.item.saleable">下架</v-btn>
@@ -132,7 +132,7 @@
     methods: {
       getDataFromServer() { // 从服务的加载数的方法。
         // 发起请求
-        this.$http.get("/item/spu/page", {
+        this.$http.get("/item/spu/queryGoodsByPage.json", {
           params: {
             key: this.filter.search, // 搜索条件
             saleable: this.filter.saleable === 0 ? null : this.filter.saleable, // 上下架
@@ -156,8 +156,8 @@
       },
       async editGoods(oldGoods) {
         // 发起请求，查询商品详情和skus
-        oldGoods.spuDetail = await this.$http.loadData("/item/spu/detail/" + oldGoods.id);
-        oldGoods.skus = await this.$http.loadData("/item/sku/list?id=" + oldGoods.id);
+        oldGoods.spuDetail = await this.$http.loadData("/item/spu/querySpuDetailBySpuId.json/" + oldGoods.id);
+        oldGoods.skus = await this.$http.loadData("/item/sku/querySkuListBySpuId.json?spuId=" + oldGoods.id);
         // 修改标记
         this.isEdit = true;
         // 控制弹窗可见：
@@ -165,8 +165,20 @@
         // 获取要编辑的goods
         this.oldGoods = oldGoods;
       },
+      deleteGoods(goods) {
+        this.$message.confirm("确认删除该商品吗？")
+        .then(() => {
+          this.$http.delete("/item/goods/deleteGoods.json?spuId=" + goods.id)
+          .then(() => {
+            this.$message.success("删除成功！");
+            this.getDataFromServer();
+          }).catch(() => {
+            this.$message.error("删除失败！");
+          })
+        })
+      },
       closeWindow() {
-        console.log(1)
+        console.log(1);
         // 重新加载数据
         this.getDataFromServer();
         // 关闭窗口

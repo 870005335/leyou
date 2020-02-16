@@ -1,5 +1,5 @@
 <template>
-    <div>   
+    <div>
         <v-data-table
         :headers="headers"
         :items="groups"
@@ -7,7 +7,7 @@
         class="elevation-0"
         >
             <template slot="items" slot-scope="props">
-                <tr @click="selectGroup(props.item)">     
+                <tr @click="selectGroup(props.item)">
                     <td class="text-xs-center">{{ props.item.id }}</td>
                     <td class="text-xs-center">{{ props.item.name }}</td>
                     <td class="justify-center layout px-0">
@@ -24,7 +24,7 @@
                 该分类下暂无规格组或尚未选择分类
             </template>
         </v-data-table>
-        
+
         <v-btn color='primary' @click="addGroup">新增分组</v-btn>
         <v-dialog v-model="show" width="300" height="200">
         <v-card >
@@ -70,7 +70,7 @@ export default {
   },
   methods:{
       loadData(){
-          this.$http.get("/item/spec/groups/" + this.cid)
+          this.$http.get("/item/spec/groups/queryGroupsByCategoryId.json/" + this.cid)
           .then(({data}) => {
               this.groups = data;
           })
@@ -91,21 +91,21 @@ export default {
       save(){
            this.$http({
             method: this.isEdit ? 'put' : 'post',
-            url: '/item/spec/group',
+            url: this.isEdit? '/item/spec/groups/updateSpecGroup.json' : '/item/spec/groups/saveSpecGroup.json',
             data: this.group
           }).then(() => {
             // 关闭窗口
             this.show = false;
-            this.$message.success("保存成功！");
+            this.$message.success(this.isEdit? "编辑成功！" : "保存成功！");
             this.loadData();
           }).catch(() => {
-              this.$message.error("保存失败！");
+              this.$message.error(this.isEdit ? "编辑失败！" :"保存失败！");
             });
       },
       deleteGroup(id){
           this.$message.confirm("确认要删除分组吗？")
           .then(() => {
-            this.$http.delete("/item/spec/group/" + id)
+            this.$http.delete("/item/spec/groups/deleteSpecGroup.json/" + id)
                 .then(() => {
                     this.$message.success("删除成功");
                     this.loadData();

@@ -124,11 +124,11 @@ export default {
   methods: {
     loadData() {
       this.$http
-        .get("/item/spec/params?gid=" + this.group.id)
+        .get("/item/spec/params/queryParamList.json?groupId=" + this.group.id)
         .then(({ data }) => {
           data.forEach(p => {
               p.segments = p.segments ? p.segments.split(",").map(s => s.split("-")) : [];
-          })
+          });
           this.params = data;
         })
         .catch(() => {
@@ -147,13 +147,14 @@ export default {
           segments:[],
           numeric:false,
           searching:false,
-          generic:false}
+          generic:false};
+      this.isEdit = false;
       this.show = true;
     },
     deleteParam(id) {
         this.$message.confirm("确认要删除该参数吗？")
         .then(() => {
-            this.$http.delete("/item/spec/param/" + id)
+            this.$http.delete("/item/spec/params/deleteSpecParam.json/" + id)
             .then(() => {
                 this.$message.success("删除成功");
             })
@@ -168,18 +169,18 @@ export default {
     save(){
         const p = {};
         Object.assign(p, this.param);
-        p.segments = p.segments.map(s => s.join("-")).join(",")
+        p.segments = p.segments.map(s => s.join("-")).join(",");
         this.$http({
             method: this.isEdit ? 'put' : 'post',
-            url: '/item/spec/param',
+            url: this.isEdit ? '/item/spec/params/updateSpecParam.json' : '/item/spec/params/saveSpecParam.json',
             data: p,
         }).then(() => {
             // 关闭窗口
             this.show = false;
-            this.$message.success("保存成功！");
+            this.$message.success(this.isEdit ? "编辑成功" : "新增成功！");
             this.loadData();
           }).catch(() => {
-              this.$message.error("保存失败！");
+              this.$message.error(this.isEdit ? "编辑失败" :"保存失败！");
             });
     }
   }

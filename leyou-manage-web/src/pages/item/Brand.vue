@@ -138,14 +138,17 @@
           })
       },
       deleteBrand(item){
-        console.log(item);
-        this.$http.delete("/item/brand/deleteBrand.json?brandId=" + item.id)
-          .then(() => {
-            this.getDataFromServer();
-            this.$message.success("删除成功！");
-        }).catch(() => {
-          this.$message.error("删除失败！")
-        });
+        this.$message.confirm("确认删除该品牌吗？")
+          .then(() =>
+              this.$http.delete("/item/brand/deleteBrand.json?brandId=" + item.id)
+              .then(() => {
+                  this.getDataFromServer();
+                  this.$message.success("删除成功！");
+            })
+              .catch(() => {
+                this.$message.error("删除失败！")
+          })
+        );
       },
       closeWindow(){
         // 重新加载数据
